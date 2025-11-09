@@ -1,25 +1,27 @@
 class Solution:
     def isPalindrome(self, s: str) -> bool:
-        #clean the given string
-        s_lower = s.lower()
-        s_clean = [char for char in s_lower if char.isalnum()]
+        # initialize two pointers
+        i = 0
+        j = len(s) - 1
+        #iterate over the whole string to compare 
+        #abbbba
+        # ^  ^
+        #->   <-
+        while i < j:
+            while i < j and not s[i].isalnum():
+                i += 1
+            while i < j and not s[j].isalnum():
+                j -= 1
+            if s[i].lower() != s[j].lower():
+                return False
+            i += 1
+            j -= 1
+        return True
 
-        #reverse string check
-        return s_clean == s_clean[::-1]
 
-        # left = 0
-        # right = len(s) - 1
-        # while left < right:
-        #     if not s[left].isalnum():
-        #         left += 1
-        #         continue
-        #     elif not s[right].isalnum():
-        #         right -= 1
-        #         continue
-        #     elif s[left].lower() == s[right].lower():
-        #         left += 1
-        #         right -= 1
-        #     else:
-        #         return False
-        
-        # return True
+
+# The two-pointer algorithm runs in O(n) time because each character in the string is checked at most once by one of the pointers. It uses only O(1) extra space since it only needs to keep track of two indices (the left and right pointers).
+
+
+
+

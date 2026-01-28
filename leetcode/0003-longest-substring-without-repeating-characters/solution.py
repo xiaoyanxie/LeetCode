@@ -1,15 +1,19 @@
 class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:
-        seen = {}
+        # s = "abcabcbb"
+        #             ^
 
-        l = 0
-        maxLen = 0
+        l = 0 # 7
+        seen = {} # {a: 3, b: 7, c: 5}
+        maxLen = 0 # 1
+        for r in range(len(s)): # r = 7
+            if s[r] in seen and seen[s[r]] >= l:
+                l = seen[s[r]] + 1
+            
+            seen[s[r]] = r
 
-        for r, c in enumerate(s):
-            if c in seen and seen[c] >= l:
-                l = seen[c] + 1
-            seen[c] = r
-            maxLen = max(maxLen, r - l + 1)
+            newLen = r - l + 1
+            if newLen > maxLen:
+                maxLen = newLen
 
         return maxLen
-

@@ -1,28 +1,26 @@
 class Solution:
-    #[8,7,2,1]
-    # ^     ^1*3=3
-    #l,i r,j
     def maxArea(self, height: List[int]) -> int:
+        # [1,8,6,2,5,4,8,3,7]
+        #  0 - 8, len = 8, area = 8
+        #  1 - 8, len = 7, area = 49
+        #  1 - 7, len = 6, area = 18
+        #  2 - 8, len = 6, area = 36
+        #  2 - 7, len = 5, area = 15
+
+        # [1,2,4,3]
+        #  0 - 3, area = 3
+        #  
         l = 0
         r = len(height) - 1
+        maxArea = 0
+        while l < r:
+            area = (r - l) * min(height[r], height[l])
+            # print(f"l = {l}, r = {r}, area = {area}")
+            if area > maxArea:
+                maxArea = area
+            if height[l] < height[r]:
+                l += 1
+            else:
+                r -= 1
         
-        i = 0 
-        j = len(height) - 1
-
-        max = (r-l) * min(height[l], height[r])
-        while i < j:
-            square = (j - i) * min(height[j], height[i])
-            if square <= max:
-                if height[i] > height[j]:
-                    j -= 1
-                else:
-                    i += 1
-            if square > max:
-                max = square
-                l = i
-                r = j
-
-        return max
-        #square:
-        #1. square less than or equal to: move the shorter edge
-        #2. bigger than : store left and right pointer and max
+        return maxArea

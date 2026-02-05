@@ -8,31 +8,56 @@ class Solution:
         """
         Do not return anything, modify head in-place instead.
         """
+        # [1,2,3,4,5]
+        #      s
+        #          f
+
         # [1,2,3,4]
-        slow = head # [3, 4]
-        fast = head # [4]
+        #      s
+        #        f
+
+        # reverse the second half
+        slow = head
+        fast = head
         while fast.next:
             slow = slow.next
-            if not fast.next.next:
-                fast = fast.next
-            else:
+            if fast.next.next:
                 fast = fast.next.next
+            else:
+                fast = fast.next
 
-        # reverse
-        prev, curr = None, slow.next # [4], None
+        # [1,2,3]
+        #    s
+        #      f
+        if not slow.next:
+            return head
+
+        #        n
+        #<-4<-5
+        #        c
+        #     p
+        prev, curr = None, slow.next
         slow.next = None
         while curr:
-            nxt = curr.next # None
-            curr.next = prev # 
+            nxt = curr.next
+            curr.next = prev
             prev, curr = curr, nxt
-
-        # interleave
-        head1 = head # [1,4,2,3]
-        head2 = prev # [4]
+        
+        # intreleave the second half with the first half
+        #       n1
+        # 1->4->2->3
+        #       h1
+        #   h2
+        # 
+        #   n2
+        head1 = head
+        head2 = prev
         while head2:
-            nxt1, nxt2 = head1.next, head2.next # [2,3,4], None
+            nxt1, nxt2 = head1.next, head2.next
             head1.next = head2
             head2.next = nxt1
             head1, head2 = nxt1, nxt2
-
+        
         return head
+
+

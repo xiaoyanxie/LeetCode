@@ -1,24 +1,21 @@
-from collections import deque, defaultdict
+from collections import defaultdict, deque
 
 class Solution:
     def alienOrder(self, words: List[str]) -> str:
         # ["wrt","wrf","er","ett","rftt"]
         # t->f, w->e, r->t, e->r
-        # return "wertf"
+        # wertf
 
-        # ["abcd", "abcde"]
-        # a, b, c, d, e
-        # return "abcde" or "aebcd"
+        # "abcd", "abcde"
+        # return "abcde" or "acbde"
 
-        # ["abcde", "abcd"]
+        # "abcde", "abcd"
         # return ""
 
-        # ["w", "t", "z", "w"]
-        # w->t, t->z, z->w
-        # return ""
-
-        indegree = {char: 0 for word in words for char in word}
-        graph = defaultdict(set)
+        # ["a","z","x","z"]
+        # build dependencies, indegree map
+        indegree = {char: 0 for word in words for char in word} # {z: 1, x: 1, a:0}
+        graph = defaultdict(set) # {z: (x), x: (z), a:(z)}
         for i in range(len(words) - 1):
             word1 = words[i]
             word2 = words[i + 1]
@@ -32,17 +29,17 @@ class Solution:
                 if len(word1) > len(word2):
                     return ""
 
-        queue = deque([ char for char in indegree if indegree[char] == 0 ])
-        result = []
+        # topsort
+        queue = deque([ char for char in indegree if indegree[char] == 0 ]) # [a]
+        result = [] # [a]
         while queue:
-            char = queue.popleft()
+            char = queue.popleft() # a
             result.append(char)
             for neighbor in graph[char]:
                 indegree[neighbor] -= 1
                 if indegree[neighbor] == 0:
                     queue.append(neighbor)
-
-        if len(indegree) != len(result):
+        
+        if len(result) != len(indegree):
             return ""
-
         return "".join(result)

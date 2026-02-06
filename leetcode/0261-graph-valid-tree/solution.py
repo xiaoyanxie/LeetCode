@@ -1,28 +1,26 @@
 class Solution:
     def validTree(self, n: int, edges: List[List[int]]) -> bool:
-        if len(edges) == 0:
-            return n == 1
+        if len(edges) != n - 1:
+            return False
+        
+        # roots = n
+        parent = list(range(n))
+        def find(num):
+            if parent[num] != num:
+                parent[num] = find(parent[num])
+            return parent[num]
 
-        graph = {}
+        def union(a, b):
+            # nonlocal roots
+            pA, pB = find(a), find(b)
+            if pA == pB:
+                return False
+            parent[pA] = pB
+            # roots -= 1
+            return True
+        
         for edge in edges:
-            if edge[0] not in graph:
-                graph[edge[0]] = set([edge[1]])
-            else:
-                graph[edge[0]].add(edge[1])
-            if edge[1] not in graph:
-                graph[edge[1]] = set([edge[0]])
-            else:
-                graph[edge[1]].add(edge[0])
-        
-        visited = set()
-        stack = [edges[0][0]]
-        while stack:
-            i = stack.pop()
-            visited.add(i)
-            adjs = graph[i]
-            for adj in adjs:
-                if adj not in visited:
-                    stack.append(adj)
-
-        return n - 1 == len(edges) and len(visited) == n
-        
+            if not union(edge[0], edge[1]):
+                return False
+        # return roots == 1
+        return True

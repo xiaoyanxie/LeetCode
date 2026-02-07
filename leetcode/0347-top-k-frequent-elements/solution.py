@@ -1,17 +1,15 @@
+import heapq
+from collections import defaultdict, Counter
+
 class Solution:
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
-        #get frequency of each number
-        freq = {}
-        for num in nums:
-            freq[num] = freq.get(num, 0) + 1
+        # freq = defaultdict(int)
+        # for num in nums:
+        #     freq[num] += 1
         
-        #sort by frequency
-        num_list = list(freq.keys())
-        num_list.sort(key=lambda x: -freq[x])
-        #default sort is acsending
-        return num_list[:k]
-        
+        # heap = []
+        # for num, f in freq.items():
+        #     heapq.heappush(heap, (-f, num))
 
-
-    #First get the frequency of each number
-    #Second get the sort 
+        # return [ heapq.heappop(heap)[1] for _ in range(k) ]
+        return [item for item, count in Counter(nums).most_common(k)]

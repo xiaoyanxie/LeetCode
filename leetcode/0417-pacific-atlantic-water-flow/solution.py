@@ -1,50 +1,40 @@
-from collections import defaultdict
-
 class Solution:
     def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        rows = len(heights)
+        cols = len(heights[0])
         directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
-
-        def isValidCoordinate(i, j):
-            return 0 <= i < len(heights) and 0 <= j < len(heights[0])
 
         pacificFlowables = set()
         atlanticFlowables = set()
-        def traceUpHill(i, j, flowables, visited):
-            visited.add((i, j))
+
+        def isValidLoc(i, j):
+            return 0 <= i < rows and 0 <= j < cols
+
+        def climbUpHill(i, j, flowables):
             flowables.add((i, j))
             for di, dj in directions:
                 ni, nj = i + di, j + dj
-                if not isValidCoordinate(ni, nj) or (ni, nj) in visited:
+                if not isValidLoc(ni, nj) or (ni, nj) in flowables:
                     continue
-                # visited.add((ni, nj))
                 if heights[i][j] <= heights[ni][nj]:
-                    traceUpHill(ni, nj, flowables, visited)
+                    climbUpHill(ni, nj, flowables)
 
-        for j in range(len(heights[0])):
-            i = 0
-            visited = set()
-            visited.add((i, j))
-            pacificFlowables.add((i, j))
-            traceUpHill(i, j, pacificFlowables, visited)
-        for i in range(len(heights)):
+        # Pacific Ocean Beach
+        for i in range(rows):
             j = 0
-            visited = set()
-            visited.add((i, j))
-            pacificFlowables.add((i, j))
-            traceUpHill(i, j, pacificFlowables, visited)
+            climbUpHill(i, j, pacificFlowables)
+
+        for j in range(cols):
+            i = 0
+            climbUpHill(i, j, pacificFlowables)
+
+        # Atlantic Ocean Beach
+        for i in range(rows):
+            j = cols - 1
+            climbUpHill(i, j, atlanticFlowables)
         
-        for j in range(len(heights[0])):
-            i = len(heights) - 1
-            visited = set()
-            visited.add((i, j))
-            atlanticFlowables.add((i, j))
-            traceUpHill(i, j, atlanticFlowables, visited)
-        for i in range(len(heights)):
-            j = len(heights[0]) - 1
-            visited = set()
-            visited.add((i, j))
-            atlanticFlowables.add((i, j))
-            traceUpHill(i, j, atlanticFlowables, visited)
-        # print(pacificFlowables)
-        # print(atlanticFlowables)
+        for j in range(cols):
+            i = rows - 1
+            climbUpHill(i, j, atlanticFlowables)
+
         return list(pacificFlowables & atlanticFlowables)

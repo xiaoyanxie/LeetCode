@@ -1,20 +1,25 @@
 class Solution:
     def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        # [2,3,6,7]
+
+        # res = set()
         res = []
+        candidates.sort()
 
-        def dfs(start, path,remain):
-            if remain == 0:
-                res.append(path.copy())
-                return
+        def dfs(remaining, i, combination):
+            if remaining == 0:
+                # res.add(tuple(sorted(combination)))
+                res.append(list(combination))
             
-            if remain < 0:
-                return
+            for j in range(i, len(candidates)):
+                c = candidates[j]
+                if c > remaining:
+                    break
+                combination.append(c)
+                dfs(remaining - c, j, combination)
+                combination.pop()
 
-            for i in range(start, len(candidates)):
-                path.append(candidates[i])
-                dfs(i, path, remain-candidates[i])
-                if path:
-                    path.pop()
+        dfs(target, 0, [])
 
-        dfs(0, [], target)
+        # return list(res)
         return res

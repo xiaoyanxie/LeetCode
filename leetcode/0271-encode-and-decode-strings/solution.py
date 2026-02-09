@@ -7,7 +7,6 @@ class Codec:
     def decode(self, s: str) -> List[str]:
         """Decodes a single string to a list of strings.
         """
-        
         return s.split('\u0001')
         
 

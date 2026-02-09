@@ -3,21 +3,34 @@ class Solution:
         """
         Do not return anything, modify matrix in-place instead.
         """
-        # #flip upside down
-        # n = len(matrix)
-        # for i in range(n//2):
-        #     for j in range(n):
-        #         matrix[i][j], matrix[n - i - 1][j]= matrix[n - i - 1][j],matrix[i][j]
+        """
+        [1,2,3],
+        [4,5,6],
+        [7,8,9]
 
-        # # flip across 
-        # for i in range(n):
-        #     for j in range(i+1, n):
-        #         matrix[i][j], matrix[j][i] = matrix [j][i], matrix[i][j]    
-        n = len(matrix)
-        for i in range(n):
-            for j in range(i + 1, n):
-                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
-        for i in range(n):
-            matrix[i].reverse()
+        [3,2,1],
+        [6,5,4],
+        [9,8,7]
 
-        # return matrix
+        [7,4,1],
+        [8,5,2],
+        [9,6,3]
+
+        (0, 2) - (0, 2)
+        (0, 1) - (1, 2)
+        (0, 0) - (2, 2)
+        """
+        N = len(matrix)
+
+        for i in range(len(matrix)):
+            a, b = 0, len(matrix[0]) - 1
+            while a < b:
+                matrix[i][a], matrix[i][b] = matrix[i][b], matrix[i][a]
+                a += 1
+                b -= 1
+        
+        for i in range(N):
+            for j in range(N - i - 1):
+                a, b = N - 1 - j, N - 1 - i
+                matrix[i][j], matrix[a][b] = matrix[a][b], matrix[i][j]
+

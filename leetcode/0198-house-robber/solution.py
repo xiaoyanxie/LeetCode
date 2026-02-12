@@ -1,15 +1,10 @@
 class Solution:
     def rob(self, nums: List[int]) -> int:
-        if len(nums) <= 2:
-            return max(nums)
-        
         dp = [0] * (len(nums) + 1)
-        dp[0] = 0
         dp[1] = nums[0]
-        
-        for i in range(2, len(nums)+1):
-            dp[i] = max(dp[i - 2]+ nums[i-1], dp[i - 1])    
+        for i, n in enumerate(nums):
+            if i == 0: continue
+            j = i + 1
+            dp[j] = max(nums[i] + dp[j - 2], dp[j - 1])
 
-        return dp[len(nums)]    
-
-        
+        return dp[-1]

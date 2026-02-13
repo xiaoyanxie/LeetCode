@@ -1,27 +1,34 @@
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
-        ROWS, COLS = len(board), len(board[0])
-        path = set()
+        rows = len(board)
+        cols = len(board[0])
+        directions = [ (0, 1), (0, -1), (1, 0), (-1, 0) ]
 
-        def dfs(r: int, c: int, i: int) -> bool:
-            if i == len(word):
+        def isValidLoc(i, j):
+            return 0 <= i < rows and 0 <= j < cols
+
+        def match(i, j, wi):
+            if wi == len(word):
                 return True
-            if (r < 0 or c < 0 or r >= ROWS or c >= COLS or
-                board[r][c] != word[i] or (r, c) in path):
+            if board[i][j] != word[wi]:
                 return False
+            if wi == len(word) - 1:
+                return True
 
-            path.add((r, c))
-            res = (dfs(r + 1, c, i + 1) or
-                   dfs(r - 1, c, i + 1) or
-                   dfs(r, c + 1, i + 1) or
-                   dfs(r, c - 1, i + 1))
-            path.remove((r, c))
-            return res
-        
-        for r in range(ROWS):
-            for c in range(COLS):
-                if board[r][c] == word[0] and dfs(r,c,0):
+            for di, dj in directions:
+                ni, nj = i + di, j + dj
+                if not isValidLoc(ni, nj) or board[ni][nj] == '':
+                    continue
+                tmp, board[i][j] = board[i][j], ''
+                if match(ni, nj, wi + 1):
                     return True
-        
-        return False
+                board[i][j] = tmp
+            return False
 
+        for i in range(rows):
+            for j in range(cols):
+                if board[i][j] != word[0]:
+                    continue
+                if match(i, j, 0):
+                    return True
+        return False

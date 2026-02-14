@@ -9,15 +9,10 @@ class Solution:
         if not root:
             return 0
         
-        maxdep = float('-inf')
-        stack = [(root, 1)]
-        while stack:
-            node,depth = stack.pop()
-            if not node.left and not node.right:
-                maxdep = max(maxdep, depth)
-            if node.right:
-                stack.append((node.right, depth + 1))
-            if node.left:
-                stack.append((node.left, depth + 1))
-            
-        return maxdep
+        if not root.left and not root.right:
+            return 1
+        
+        leftDepth = self.maxDepth(root.left) + 1
+        rightDepth = self.maxDepth(root.right) + 1
+
+        return max(leftDepth, rightDepth)

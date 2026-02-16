@@ -1,12 +1,7 @@
-from collections import defaultdict
 class Bank:
 
     def __init__(self, balance: List[int]):
-        self.total = len(balance)
-        self.accounts = balance     
-
-    def isAccValid(self, acc):
-        return 1 <= acc <= self.total
+        self.accounts = list(balance)
 
     def transfer(self, account1: int, account2: int, money: int) -> bool:
         if not self.withdraw(account1, money):
@@ -15,15 +10,18 @@ class Bank:
             self.deposit(account1, money)
             return False
         return True
+        
+    def __isValidAcc(self, accNo):
+        return 1 <= accNo <= len(self.accounts)
 
     def deposit(self, account: int, money: int) -> bool:
-        if not self.isAccValid(account):
+        if not self.__isValidAcc(account):
             return False
         self.accounts[account - 1] += money
         return True
 
     def withdraw(self, account: int, money: int) -> bool:
-        if not self.isAccValid(account):
+        if not self.__isValidAcc(account):
             return False
         if self.accounts[account - 1] < money:
             return False

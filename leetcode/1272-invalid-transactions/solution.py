@@ -1,37 +1,44 @@
-from collections import deque
 class Solution:
     def invalidTransactions(self, transactions: List[str]) -> List[str]:
-        # sort by time asc
-        txns = []
-        for tstr in transactions:
-            name, time, amt, city = tstr.split(',')
-            txns.append( (name, int(time), int(amt), city) )
-        txns.sort(key=lambda txn: txn[1])
+        """
+         txn1, txn2, txn3, ....
+        | ------ 60 min ------ |
+        
+        while abs(txn1.time - new.time) > 60:
+            queue.popleft()
+        
+        if new.amt > 1000:
+            invalid.add(i)
+        
+        for txn in queue:
+            if txn.name == new.name and txn.city != new.city:
+                invalid.add(i)
+                invalid.add(txn.i)
+        
+        """
 
-        # name -> [ idx1, idx2, ... ]
-        window60min = defaultdict(deque)
+        def parse(txn):
+            name, time, amt, city = txn.split(',')
+            return (name, int(time), int(amt), city, txn)
 
-        # if one txn is invalid, all txns within the 60 min window under same name but different city are also invalid 
+        txns = [ parse(txn) for txn in transactions ]
+        txns.sort(key=lambda x: x[1])
         invalid = set()
-        for idx, txn in enumerate(txns):
-            name, time, amt, city = txn
-
-            while window60min[name] and abs(time - txns[window60min[name][0]][1]) > 60:
-                window60min[name].popleft()
+        queue = deque()
+        for i, txn in enumerate(txns):
+            name, time, amt, city, _ = txn
+            
+            while queue and abs(time - queue[0][2]) > 60:
+                queue.popleft()
             
             if amt > 1000:
-                invalid.add(idx)
+                invalid.add(i)
             
-            for hidx in window60min[name]:
-                history = txns[hidx]
-                if city != history[3]:
-                    invalid.add(idx)
-                    invalid.add(hidx)
+            for txn in queue:
+                if txn[1] == name and txn[3] != city:
+                    invalid.add(txn[0])
+                    invalid.add(i)
             
-            window60min[name].append(idx)
-
-        def tostr(txn):
-            name, time, amt, city = txn
-            return f'{name},{time},{amt},{city}'
+            queue.append((i, name, time, city))
         
-        return [ tostr(txns[i]) for i in invalid ]
+        return [ txns[i][4] for i in invalid ]

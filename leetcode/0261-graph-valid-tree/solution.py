@@ -1,26 +1,25 @@
 class Solution:
     def validTree(self, n: int, edges: List[List[int]]) -> bool:
-        if len(edges) != n - 1:
+        
+        if n-1 != len(edges):
             return False
-        
-        # roots = n
-        parent = list(range(n))
-        def find(num):
-            if parent[num] != num:
-                parent[num] = find(parent[num])
-            return parent[num]
+      
 
-        def union(a, b):
-            # nonlocal roots
-            pA, pB = find(a), find(b)
-            if pA == pB:
-                return False
-            parent[pA] = pB
-            # roots -= 1
+        adj = defaultdict(list)
+        for i,j in edges:
+            adj[i].append(j)
+            adj[j].append(i)
+       
+        visited = set()
+        def dfs(node):
+            visited.add(node)
+            for ele in adj.get(node,[]):
+                if ele not in visited:
+                    dfs(ele)
+
             return True
-        
-        for edge in edges:
-            if not union(edge[0], edge[1]):
-                return False
-        # return roots == 1
-        return True
+
+        dfs(0)
+        return len(visited) == n
+            
+            

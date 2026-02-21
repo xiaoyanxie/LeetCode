@@ -1,57 +1,61 @@
 class Node:
-    def __init__(self, key=0, val=0):
+    def __init__(self, key=None, val=None):
         self.key = key
         self.val = val
         self.prev = None
         self.next = None
 
+    def unlink(self):
+        if self.next:
+            self.next.prev = self.prev
+        if self.prev:
+            self.prev.next = self.next
+        self.next = None
+        self.prev = None
+
 class LRUCache:
 
     def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache = {}
         self.head = Node()
         self.tail = Node()
         self.head.next = self.tail
         self.tail.prev = self.head
 
-        self.capacity = capacity
-        self.mp = {}
+    def addToTail(self, node):
+        realTail = self.tail.prev
+        realTail.next = node
+        node.prev = realTail
 
-    def __remove(self, node):
-        p, n = node.prev, node.next
-        p.next = n
-        n.prev = p
-
-    def __add_to_tail(self, node):
-        t, tp = self.tail, self.tail.prev
-        tp.next = node
-        node.prev = tp
-        t.prev = node
-        node.next = t
+        self.tail.prev = node
+        node.next = self.tail
 
     def get(self, key: int) -> int:
-        if key in self.mp:
-            node = self.mp[key]
-            self.__remove(node)
-            self.__add_to_tail(node)
-            return node.val
-        return -1
+        if key not in self.cache:
+            return -1
+
+        node = self.cache[key]
+        node.unlink()
+        self.addToTail(node)
+        return node.val
 
     def put(self, key: int, value: int) -> None:
-        if key in self.mp:
-            node = self.mp[key]
+        if key in self.cache:
+            node = self.cache[key]
             node.val = value
-            self.__remove(node)
-            self.__add_to_tail(node)
+            node.unlink()
+            self.addToTail(node)
             return
-
-        if len(self.mp) == self.capacity:
-            rm = self.head.next
-            self.__remove(rm)
-            del self.mp[rm.key]
         
+        if len(self.cache) == self.capacity:
+            evcit = self.head.next
+            evcit.unlink()
+            del self.cache[evcit.key]
+
         node = Node(key, value)
-        self.mp[key] = node
-        self.__add_to_tail(node)
+        self.cache[key] = node
+        self.addToTail(node)
 
 # Your LRUCache object will be instantiated and called as such:
 # obj = LRUCache(capacity)

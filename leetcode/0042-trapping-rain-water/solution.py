@@ -1,33 +1,29 @@
 class Solution:
     def trap(self, height: List[int]) -> int:
-        #two pointer
-        if len(height) == 1 or len(height) == 2:
-            return 0
-        res = 0
-        l = 0
-        r = len(height) - 1
-       
-        lmax = l
-        rmax = r
-        res = 0
-        while l < r:
-            if height[l] < height[lmax]:
-                res += height[lmax] - height[l]
-            else:
-                lmax = l
-            if height[r] < height[rmax]:
-                res += height[rmax] - height[r]
-            else:
-                rmax = r
-            if height[lmax] > height[rmax]:
-                r -= 1
-            else:
-                l += 1
+        l, r = 0, len(height) - 1
+        leftMax, rightMax = height[l], height[r]
+
+        """
+        total   : 6
+        leftMax : 3
+        rightMax: 2
+        [0,1,0,2,1,0,1,3,2,1,2,1]
+         l                     
+                               r
+        """
         
-        return res
-    
-
-
-    #compare pointers and move the shorter one
-    #check the current ele with lmax/rmax, if bigger, replace old ones, if smaller, get diff and put in res
-
+        total = 0
+        while l < r:
+            if leftMax <= rightMax:
+                acc = leftMax - height[l]
+                l += 1
+                if acc > 0:
+                    total += acc
+                leftMax = max(leftMax, height[l])
+            else:
+                acc = rightMax - height[r]
+                r -= 1
+                if acc > 0:
+                    total += acc
+                rightMax = max(rightMax, height[r])
+        return total

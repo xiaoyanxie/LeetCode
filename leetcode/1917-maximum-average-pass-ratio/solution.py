@@ -1,38 +1,30 @@
 import heapq
+
 class Solution:
     def maxAverageRatio(self, classes: List[List[int]], extraStudents: int) -> float:
-        """
-        (pass1 / total1) + (pass2 / total2) + (pass3 / total3) + ...
-        ------------------------------------------------------------ = avg_pass_ratio
-                                    N
-        
-        max(
-            (pass1 / total1) + (pass2 / total2) + (pass3 / total3) + ...
-        )
+        # [1,2],[3,5],[2,2]
 
-        Use a minheap to sort by total_i, then pass_i
-        
-        [1,2],[3,5],[2,2]
-        (1,2) (0.66666,0) (0.6,1)
-        """
         def gain(passi, totali):
-            return ((passi + 1) / (totali + 1)) - (passi / totali)
+            return ((1 + passi) / (1 + totali)) - (passi / totali)
 
-        # build heap
-        heap = []
-        for passi, totali in classes:
-            heapq.heappush(heap, (-gain(passi, totali), passi, totali))
-
-        while extraStudents > 0:
-            # assign the student to the smallest pass rate class first each time
-            _, passi, totali = heapq.heappop(heap)
-            
-            passj, totalj = passi + 1, totali + 1
-            heapq.heappush(heap, (-gain(passj, totalj), passj, totalj))
-            extraStudents -= 1
+        maxheap = []
+        for i in range(len(classes)):
+            passi = classes[i][0]
+            totali = classes[i][1]
+            heapq.heappush(maxheap, (-gain(passi, totali), passi, totali))
         
-        # calculate the avg num
-        sumall = 0
-        for _, passi, totali in heap:
-            sumall += (passi / totali)
-        return sumall / len(classes)
+        # print(maxheap)
+        while extraStudents > 0:
+            _, passi, totali = heapq.heappop(maxheap)
+            
+            # add the student
+            newPassi, newTotali = passi + 1, totali + 1
+            extraStudents -= 1
+
+            heapq.heappush(maxheap, (-gain(newPassi, newTotali), newPassi, newTotali))
+
+        # print(maxheap)
+        total = 0
+        for _, passi, totali in maxheap:
+            total += passi / totali
+        return total / len(classes)

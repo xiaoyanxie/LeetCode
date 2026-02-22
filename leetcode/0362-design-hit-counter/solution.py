@@ -5,7 +5,7 @@ class HitCounter:
         self.window = deque()
 
     def hit(self, timestamp: int) -> None:
-        # [ [ts1, cnt1], [ts2, cnt2], ... ]
+        # [ [ts, cnt], ... ]
         while self.window and timestamp - self.window[0][0] > 300:
             self.window.popleft()
         
@@ -16,6 +16,8 @@ class HitCounter:
 
     def getHits(self, timestamp: int) -> int:
         i = bisect.bisect_right(self.window, timestamp - 300, key=lambda x: x[0])
+        # [timestamp - 300, timestamp]
+        #         i
         total = 0
         while i < len(self.window) and self.window[i][0] <= timestamp:
             total += self.window[i][1]

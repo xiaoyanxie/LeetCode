@@ -5,59 +5,35 @@
 #         self.next = next
 class Solution:
     def reorderList(self, head: Optional[ListNode]) -> None:
-        """
-        Do not return anything, modify head in-place instead.
-        """
-        # [1,2,3,4,5]
-        #      s
-        #          f
-
-        # [1,2,3,4]
-        #      s
-        #        f
-
-        # reverse the second half
+        #find median
         slow = head
         fast = head
-        while fast.next:
+        if not head or not head.next or not head.next.next:
+            return
+        while fast and fast.next:
             slow = slow.next
-            if fast.next.next:
-                fast = fast.next.next
-            else:
-                fast = fast.next
-
-        # [1,2,3]
-        #    s
-        #      f
-        if not slow.next:
-            return head
-
-        #        n
-        #<-4<-5
-        #        c
-        #     p
-        prev, curr = None, slow.next
+            fast = fast.next.next
+        second = slow.next
         slow.next = None
-        while curr:
-            nxt = curr.next
-            curr.next = prev
-            prev, curr = curr, nxt
+        #reverse second half
+        pre = None
+        cur = second
+        while cur:
+            nxt = cur.next
+            cur.next = pre
+            pre = cur
+            cur = nxt
         
-        # intreleave the second half with the first half
-        #       n1
-        # 1->4->2->3
-        #       h1
-        #   h2
-        # 
-        #   n2
-        head1 = head
-        head2 = prev
-        while head2:
-            nxt1, nxt2 = head1.next, head2.next
-            head1.next = head2
-            head2.next = nxt1
-            head1, head2 = nxt1, nxt2
+        #add second half to first half
+        first = head
+        second = pre
+        while second:
+            tmp1 = first.next
+            tmp2 = second.next
+            first.next = second
+            second.next = tmp1
+            first = tmp1
+            second = tmp2
         
         return head
-
 

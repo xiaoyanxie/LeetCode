@@ -1,43 +1,43 @@
-import heapq
 class Solution:
     def maxFrequency(self, nums: List[int], k: int) -> int:
         """
-         0+1+0+3
-        steps += (nums[r] - nums[r - 1]) * (r - l)
-        [3,4,4,5,5,5,5,6,13] k=3 left=0
-           l
-               r
-        5: 4
-        4: 2
-        3: 1
-        6: 1
-        13:1
+        1 -> 1
+        
+        2 -> 2
+        4 -> 1
 
-        3 (1) -1-> 4 (2) -1-> 5 (4) -1-> 6 (1) -7-> 13 (1)
+        cost() = (nums[j] - nums[j - 1]) * (j - i + 1)
+        while cost() > k:
+            k += (nums[j - 1] - nums[i])
+            i += 1
+            
+
+        1,1,2,2,4    k=5
+          i
+                j
+
+        [1,2,4] k = 4, best = 0
+         i
+           j
+
+        1,4,8,13  k = 5, best = 2
+            i
+              j
+
+        3,9,6    k = 2, best = 1
+          i
+            j
         """
         nums.sort()
-        maxfreq = 0
-        l = 0
-        # @cache
-        # def steps(i, j):
-        #     delta = 0
-        #     for k in range(i + 1, j + 1):
-        #         a, b = nums[k - 1], nums[k]
-        #         delta += (b - a) * (k - i)
-        #     # print(f'steps({i},{j})={delta}')
-        #     return delta
-        curr = 0
+        i = 0
+        best = 0
+        def cost(i, j):
+            return (nums[j] - nums[j - 1]) * (j - i)
 
-        for r in range(len(nums)):
-            # shrink the window
-            # while steps(l, r) > k:
-            #     l += 1
-
-            curr += nums[r]
-
-            while nums[r] * (r - l + 1) - curr > k:
-                curr -= nums[l]
-                l += 1
-            
-            maxfreq = max(maxfreq, r - l + 1)
-        return maxfreq
+        for j in range(len(nums)): # 1
+            while cost(i, j) > k:
+                k += (nums[j - 1] - nums[i])
+                i += 1
+            k -= cost(i, j)
+            best = max(best, j - i + 1)
+        return best

@@ -1,26 +1,27 @@
 class Solution:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
-        def search(n, nums, assist):
+        
+        def bsearch(n, nums, assist):
             l, r = 0, len(nums) - 1
             while l <= r:
                 mid = l + (r - l) // 2
-                leftMin = mid + bisect.bisect_left(assist, nums[mid])
-                leftMax = mid + bisect.bisect_right(assist, nums[mid])
-                if leftMin <= n <= leftMax:
+                elementsMin = mid + bisect.bisect_left(assist, nums[mid])
+                elementsMax = mid + bisect.bisect_right(assist, nums[mid])
+                if elementsMin <= n <= elementsMax:
                     return nums[mid]
-                elif leftMax < n:
+                elif elementsMax < n:
                     l = mid + 1
                 else:
                     r = mid - 1
-                    
+            # print('Not found')
             return None
 
         def find(n):
-            med = search(n, nums1, nums2)
+            med = bsearch(n, nums1, nums2)
             if med is not None:
                 return med
-            return search(n, nums2, nums1)
-        
+            return bsearch(n, nums2, nums1)
+
         size = len(nums1) + len(nums2)
         if size % 2 == 0:
             N = (size - 2) / 2

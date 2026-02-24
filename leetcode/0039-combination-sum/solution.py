@@ -1,29 +1,20 @@
 class Solution:
     def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
-        # [2,3,6,7]
-        # 2 (5) -> 2,3
-        #       -> 2 (3) -> 2, 3
-        #       -> 3 (1) -> None
-
-        combinations = []
+        res = []
+        path = []
         candidates.sort()
+        def backtracking(path, target, start):
+            if target == 0:
+                res.append(list(path))
+            
 
-        def dfs(remaining, i, combination):
-            if remaining == 0:
-                combinations.append(list(combination))
-                return
-            if remaining < 0:
-                return
-
-            # for c in candidates:
-            for i in range(i, len(candidates)):
-                c = candidates[i]
-                if c > remaining:
+            for i in range(start, len(candidates)):
+                if candidates[i] <= target:
+                    path.append(candidates[i])
+                    backtracking(path, target - candidates[i], i)
+                    path.pop()
+                else:
                     break
-                combination.append(c)
-                dfs(remaining - c, i, combination)
-                combination.pop()
+        backtracking([], target, 0)
 
-        dfs(target, 0, [])
-
-        return combinations
+        return res

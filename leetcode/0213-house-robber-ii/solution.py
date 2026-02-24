@@ -1,12 +1,18 @@
 class Solution:
     def rob(self, nums: List[int]) -> int:
-        if len(nums) == 1: return nums[0]
-        def rob(houses):
-            prev2, prev1 = 0, 0
-            for val in houses:
-                amt = max(prev1, val + prev2)
-                prev2 = prev1
-                prev1 = amt
-            return prev1
-
-        return max(rob(nums[1:]), rob(nums[0:-1]))
+        if len(nums) <= 2:
+            return max(nums)
+            
+        dp = [0] *(len(nums))
+        dp[0] = 0
+        dp[1] = nums[0]
+        for i in range(2, len(nums)):
+            dp[i] = max(dp[i - 1], dp[i - 2] + nums[i - 1])
+        max1 = dp[-1]
+        print(max1)
+        dp = [0] *(len(nums))
+        dp[0] = 0
+        dp[1] = nums[1]
+        for i in range(2, len(nums)):
+            dp[i] = max(dp[i-1], dp[i - 2] + nums[i])
+        return max(max1, dp[-1])

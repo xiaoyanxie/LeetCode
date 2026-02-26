@@ -1,20 +1,38 @@
 class Solution:
     def longestConsecutive(self, nums: List[int]) -> int:
-        numSet = set(nums)
-        maxCount = 0
+        """
+        100,4,200,1,3,2
 
-        for num in numSet:
-            if num-1 not in numSet:
-                curr = num
-                count = 1
+        100 +1 -1
+        4 +1
+        4 -1(3) -2(2) -3(1) -4
+        200 +1 -1
+        """
 
-                while (curr + 1) in numSet:
-                    count += 1
-                    curr += 1
-                
-                maxCount = max(count, maxCount)
-        
-        return maxCount
+        unexplored = set(nums)
+        best = 0
 
-
+        def explore(n):
+            cnt = 0
+            # left
+            left = n
+            while left in unexplored:
+                unexplored.remove(left)
+                cnt += 1
+                left -= 1
             
+            # right
+            right = n + 1
+            while right in unexplored:
+                unexplored.remove(right)
+                cnt += 1
+                right += 1
+        
+            return cnt
+        
+        for n in nums:
+            if n in unexplored:
+                length = explore(n)
+                best = max(best, length)
+        assert not unexplored
+        return best

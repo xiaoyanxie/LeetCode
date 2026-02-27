@@ -1,15 +1,12 @@
 class Solution:
     def sumZero(self, n: int) -> List[int]:
-        ret = []
         
+        ret = [] # [0, 1, -1, 2, -2]
         if n % 2 != 0:
             ret.append(0)
-            half = (n - 1) // 2
-        else:
-            half = n // 2
         
-        for n in range(1, half + 1):
-            ret.append(n)
-            ret.append(-n)
-        
+        for num in range(1, (n // 2) + 1):
+            ret.append(num)
+            ret.append(-num)
+
         return ret

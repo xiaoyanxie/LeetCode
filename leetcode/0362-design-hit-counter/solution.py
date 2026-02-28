@@ -1,28 +1,32 @@
 from collections import deque
+
 class HitCounter:
 
     def __init__(self):
-        self.window = deque()
+        # 300s window
+        # [ (ts, count) ]
+        self.queue = deque()
 
     def hit(self, timestamp: int) -> None:
-        # [ [ts, cnt], ... ]
-        while self.window and timestamp - self.window[0][0] > 300:
-            self.window.popleft()
+        while self.queue and timestamp - self.queue[0][0] > 300:
+            self.queue.popleft()
         
-        if self.window and timestamp == self.window[-1][0]:
-            self.window[-1][1] += 1
+        if self.queue and timestamp == self.queue[-1][0]:
+            self.queue[-1][1] += 1
         else:
-            self.window.append([timestamp, 1])
+            self.queue.append([timestamp, 1])
 
     def getHits(self, timestamp: int) -> int:
-        i = bisect.bisect_right(self.window, timestamp - 300, key=lambda x: x[0])
-        # [timestamp - 300, timestamp]
-        #         i
-        total = 0
-        while i < len(self.window) and self.window[i][0] <= timestamp:
-            total += self.window[i][1]
+        """
+        1,3,4
+        """
+        i = bisect.bisect_right(self.queue, timestamp - 300, key=lambda x: x[0])
+        hits = 0
+        
+        while i < len(self.queue) and self.queue[i][0] <= timestamp:
+            hits += self.queue[i][1]
             i += 1
-        return total
+        return hits
 
 
 # Your HitCounter object will be instantiated and called as such:

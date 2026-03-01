@@ -23,7 +23,7 @@ class Solution:
                 nums[queue.popleft()] = num
                 queue.append(i)
 
-        for i in queue:
-            nums[i] = '_'
+        # for i in queue:
+        #     nums[i] = '_'
 
         return cnt

@@ -1,28 +1,30 @@
 class Solution:
     def calculate(self, s: str) -> int:
         """
-        [+3, -4, +2]
+        +3 +2 /1 *2 +
+                    ^
 
-        +3 -2 *2 /1 +2 +
-                       ^
+
         """
-
         s += '+'
-        stack = []
-        op = '+'
-        num = 0
+        stack = [] # +3 +4
+        curr = 0 # 0
+        op = '+' # +
+
         for c in s:
             if c.isdigit():
-                num = num * 10 + int(c)
+               curr = curr * 10 + int(c)
             elif c in '+-*/':
                 if op == '+':
-                    stack.append(num)
+                    stack.append(curr)
                 elif op == '-':
-                    stack.append(-num)
+                    stack.append(-curr)
                 elif op == '*':
-                    stack.append(stack.pop() * num)
+                    stack.append(stack.pop() * curr)
                 else:
-                    stack.append(int(stack.pop() / num))
+                    stack.append(int(stack.pop() / curr))
+                
+                curr = 0
                 op = c
-                num = 0
+        
         return sum(stack)

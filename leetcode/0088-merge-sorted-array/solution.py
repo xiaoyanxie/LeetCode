@@ -3,20 +3,13 @@ class Solution:
         """
         Do not return anything, modify nums1 in-place instead.
         """
-        # j = 0
-        # for i in range(m, len(nums1)):
-        #     nums1[i] = nums2[j]
-        #     j+= 1
-        # nums1.sort()
-    
-        while m > 0 and n >0:
-            if nums2[n-1] >= nums1[m-1]:
-                nums1[m + n - 1] = nums2[n-1]
-                n -=1
+        i, j, k = m - 1, n - 1, len(nums1) - 1
+        while i >= 0 or j >= 0:
+            if (i >= 0 and j >= 0 and nums1[i] >= nums2[j]) or (i >= 0 and j < 0):
+                nums1[k] = nums1[i]
+                k -= 1
+                i -= 1
             else:
-                nums1[m+n - 1] = nums1[m-1]
-                nums1[m-1] = 0
-                m -= 1
-        if n > 0:
-            for i in range(n):
-                nums1[i] = nums2[i]
+                nums1[k] = nums2[j]
+                k -= 1
+                j -= 1

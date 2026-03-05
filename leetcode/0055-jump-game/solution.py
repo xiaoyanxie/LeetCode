@@ -1,32 +1,30 @@
 class Solution:
     def canJump(self, nums: List[int]) -> bool:
-        """
-        [2,3,1,1,4]
-           ^
-        longest = 4
-        steps = 1
-
-
-        [3,2,1,0,4]
-               ^
-        longest = 3
-        steps = 4
-
-        [2,4,2,1,1,1,0,1] 7
-                i
-        longest = 6
-        steps = 6
-        """
-
-        longest = 0
-        steps = 0
-        for i, s in enumerate(nums):
-            if i > longest:
+        if len(nums) <= 1:
+            return True
+        maxReach = nums[0]
+        for i, num in enumerate(nums):
+            if i > maxReach:
                 return False
-            longest = max(longest, steps + s)
-            steps += 1
-            # print(f'{longest}, {steps}')
-            if longest >= len(nums) - 1:
+            if num + i > maxReach:
+                maxReach = num + i
+            if maxReach >= len(nums) - 1:
                 return True
+        
         return True
 
+# last:3
+# i:3
+
+        # dp = [False] * (len(nums))
+        # dp[0] = True
+        # for i in range(1, len(nums)):
+        #     for j in range(0, i):
+        #         if dp[j] == True and i - j <= nums[j]:
+        #             dp[i] = True
+        #             break
+        #     if dp[i] == False:
+        #         return False
+        
+        # return dp[len(nums)-1]
+        

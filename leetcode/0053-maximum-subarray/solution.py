@@ -1,20 +1,15 @@
-from collections import defaultdict
-import heapq
 class Solution:
     def maxSubArray(self, nums: List[int]) -> int:
-        """
+        if len(nums) <= 1:
+            return nums[0]
+        
+        last = nums[0]
+        maxsum = nums[0]
+        for num in nums[1:]:
+                cur = max(last + num, num)
+                maxsum = max(maxsum, cur)
+                last = cur
+        
+        return maxsum
 
-        i -> j: sum(nums[i:j + 1])
-        """
 
-        best = -inf
-        minRunningSum = 0
-        runningSum = 0
-        for i, n in enumerate(nums):
-            runningSum += n
-            if runningSum - minRunningSum > best:
-                best = runningSum - minRunningSum
-            # heapq.heappush(runningSums, runningSum)
-            if minRunningSum > runningSum:
-                minRunningSum = runningSum
-        return best

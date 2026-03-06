@@ -1,42 +1,55 @@
 class Solution:
     def setZeroes(self, matrix: List[List[int]]) -> None:
-        """
-        Do not return anything, modify matrix in-place instead.
-        """
-        vertical = [ (1, 0), (-1, 0) ]
-        horizontal = [ (0, 1), (0, -1) ]
+        # def flip(m,n):
+        #     for i in range(len(matrix[0])):
+        #         if matrix[m][i] != 0:
+        #             matrix[m][i] = 'z'
+        #     for j in range(len(matrix)):
+        #         if matrix[j][n] != 0:
+        #             matrix[j][n] = 'z'
 
-        rows = len(matrix)
-        cols = len(matrix[0])
+        # for m in range(len(matrix)):
+        #     for n in range(len(matrix[0])):
+        #         if matrix[m][n] == 0:
+        #             flip(m, n)
 
-        def isValidLoc(i, j):
-            return 0 <= i < rows and 0 <= j < cols
-
-        def allZeros(i, j, directions):
-            for di, dj in directions:
-                ni, nj = i + di, j + dj
-                if isValidLoc(ni, nj) and matrix[ni][nj] != 0:
-                    return False
-            return True
-
-        def markZeros(i, j, directions):
-            for di, dj in directions:
-                ni, nj = i + di, j + dj
-                while isValidLoc(ni, nj):
-                    if matrix[ni][nj] != 0:
-                        matrix[ni][nj] = -inf
-                    ni, nj = ni + di, nj + dj
-    
-        for i in range(rows):
-            for j in range(cols):
-                if matrix[i][j] != 0: continue
-            
-                if not allZeros(i, j, vertical):
-                    markZeros(i, j, vertical)
-                if not allZeros(i, j, horizontal):
-                    markZeros(i, j, horizontal)
+        # for m in range(len(matrix)):
+        #     for n in range(len(matrix[0])):
+        #         if matrix[m][n] == 'z':
+        #             matrix[m][n] = 0
         
-        for i in range(rows):
-            for j in range(cols):
-                if matrix[i][j] == -inf:
+        # return matrix
+        r = len(matrix)
+        c = len(matrix[0])
+        isRow = False
+        isCol = False
+        for i in range(c):
+            if matrix[0][i] == 0:
+                isRow = True
+        for j in range(r):
+            if matrix[j][0] == 0:
+                isCol = True
+
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0:
+                    matrix[i][0] = 0
+                    matrix[0][j] = 0
+        
+        for i in range(1, c):
+            if matrix[0][i] == 0:
+                for j in range(r):
+                    matrix[j][i] = 0
+        for i in range(1, r):
+            if matrix[i][0] == 0:
+                for j in range(c):
                     matrix[i][j] = 0
+        if isRow:
+            for i in range(c):
+                matrix[0][i] = 0
+        if isCol:
+            for j in range(r):
+                matrix[j][0] = 0
+        return matrix 
+
+        

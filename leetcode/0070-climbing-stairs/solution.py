@@ -1,16 +1,11 @@
 class Solution:
     def climbStairs(self, n: int) -> int:
+        #subproblem: for ith stair, it can be dp[i -1] + 1 or dp[i - 2] + 1
+        dp = [0] * (n+1)
+        dp[0] = 1
+        dp[1] = 1
+        for i in range(2, n+1):
+            dp[i] = dp[i - 1] + dp[i - 2]
+        return dp[n]
 
-        @cache
-        def climb(steps):
-            if steps == n:
-                return 1
-            
-            ways = 0
-            if steps + 1 <= n:
-                ways += climb(steps + 1)
-            if steps + 2 <= n:
-                ways += climb(steps + 2)
-            return ways
-        
-        return climb(0)
+

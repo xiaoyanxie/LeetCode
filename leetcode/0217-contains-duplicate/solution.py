@@ -1,4 +1,8 @@
 class Solution:
     def containsDuplicate(self, nums: List[int]) -> bool:
-        visited = set(nums)
-        return len(visited) != len(nums)
+        distinct = set()
+        for num in nums:
+            if num in distinct:
+                return True
+            distinct.add(num)
+        return False

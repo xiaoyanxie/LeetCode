@@ -1,24 +1,19 @@
 class Solution:
     def makeTheIntegerZero(self, num1: int, num2: int) -> int:
         """
-        num1 - Sum(k, lambda i: num2 - 2**i) == 0
-        num1 - k * num2 == Sum(k, lambda i: 2**i)
-                        == 2**i1 + 2**i2 + 2**i3 + ... + 2**ik
+        num1 - k * (2^i + num2) = 0
 
-        let target = num1 - k * num2
-        then:
-            1. lower bound is k: if all the choosen i are 0, target = k
-            2. upper bound is having k bits of 1s
+        num1 - k * num2 = k sum 2^i
+
+        seach a k to make:
+            (num1 - k * num2) to be at least k
+            and
+            (num1 - k * num2).bit_count() in (0, k]
         """
 
-        for k in range(0, 64):
-            target = num1 - k * num2
-            if target < 0:
-                break
-
-            if target < k:
-                continue
-
-            if target.bit_count() <= k:
+        for k in range(0, 60):
+            x = num1 - k * num2
+            if k <= x and 0 < x.bit_count() <= k:
                 return k
+        
         return -1

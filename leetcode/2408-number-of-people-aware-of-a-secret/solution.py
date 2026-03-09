@@ -1,29 +1,27 @@
 from collections import deque
 class Solution:
     def peopleAwareOfSecret(self, n: int, delay: int, forget: int) -> int:
-        MOD = 10**9 + 7
+        """
+        n = 6, delay = 2, forget = 4
+
+        day: 0 1 2 3 4 5 6 7 8 9
+             1 0 1 1 1 2
+                   |del|
+               | forget|
+        """
+        window = deque([1])
+        sharing = 0 # 2
+        for day in range(1, n): # 4
+            # sum of (day - forget, day - delay]
+            if len(window) >= delay:
+                sharing += window[len(window) - delay]
+
+            # shrink
+            if len(window) >= forget:
+                sharing -= window.popleft()
+            
+            # share
+            window.append(sharing)
+            # print(f'day={day + 1}, window={window}, sharing={sharing}')
         
-        """
-        1     0     1     1     1     2
-        day1  day2  day3  day4  day5  day6
-        ^
-    ^   ^
-        """
-
-        # sliding window
-        queue = deque([1])
-        activeSharing = 0
-        for day in range(1, n):
-            # shrink the queue
-            if len(queue) == forget:
-                activeSharing -= queue.popleft()
-            
-            lastActive = len(queue) - delay
-            if lastActive >= 0:
-                activeSharing += queue[lastActive]
-            
-            # print(f'day{day + 1}, {activeSharing} active sharing')
-            queue.append(activeSharing)
-
-        return sum(queue) % MOD
-
+        return sum(window) % (10 ** 9 + 7)

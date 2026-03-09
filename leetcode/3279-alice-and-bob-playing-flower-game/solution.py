@@ -1,36 +1,33 @@
 class Solution:
     def flowerGame(self, n: int, m: int) -> int:
-        # players = ['Alice', 'Bob']
-        # def nextPlayer(i) -> str:
-        #     return (i + 1) % 2
-
-        # dup = set()
-
-        # @cache
-        # def sim(player, x, y) -> int:
-        #     if x == 0 and y == 0:
-        #         return player
-        #     player = nextPlayer(player)
-        #     if x == 0:
-        #         return sim(player, x, y - 1)
-        #     if y == 0:
-        #         return sim(player, x - 1, y)
-        #     else:
-        #         return sim(player, x - 1, y) or sim(player, x, y - 1)
+        """
+                    1 < x <= n
+        Alice                       Bob
+                    1 < y <= m
         
-        # ways = 0
-        # for x in range(1, m + 1):
-        #     for y in range(1, n + 1):
-        #         # if sim(-1, x, y):
-        #             # ways += 1
-        #         if (x + y) % 2 != 0:
-        #             ways += 1
-        # return ways
-
-        def odd(n):
-            return (n + 1) // 2
-        def even(n):
-            return n // 2
         
-        return odd(n) * even(m) + odd(m) * even(n)
+        Alice wins if x + y is odd
 
+        (x + y) % 2 != 0
+
+        1, 2, 3, 4
+        1, 2, 3, 4
+
+        1, 2, 3
+        1, 2, 3, 4, 5, 6
+
+        if n == m:
+            return (n - 2) * 2 + 2
+        
+        x = max(n, m)
+        return (x - 1) * 2 + 1
+
+        (1, 2), (2, 1), (2, 3), (3, 2), (4, 3)
+        """
+        def odds(x):
+            return math.ceil(x / 2)
+        
+        def evens(x):
+            return x // 2
+        
+        return odds(m) * evens(n) + evens(m) * odds(n)

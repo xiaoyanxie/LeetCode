@@ -1,30 +1,36 @@
 import heapq
-
 class Solution:
     def maxAverageRatio(self, classes: List[List[int]], extraStudents: int) -> float:
-        # [1,2],[3,5],[2,2]
-
-        def gain(passi, totali):
-            return ((1 + passi) / (1 + totali)) - (passi / totali)
-
-        maxheap = []
-        for i in range(len(classes)):
-            passi = classes[i][0]
-            totali = classes[i][1]
-            heapq.heappush(maxheap, (-gain(passi, totali), passi, totali))
+        """
+               sum(pi / ti)
+        P = -----------------
+               len(classes)
         
-        # print(maxheap)
-        while extraStudents > 0:
-            _, passi, totali = heapq.heappop(maxheap)
-            
-            # add the student
-            newPassi, newTotali = passi + 1, totali + 1
-            extraStudents -= 1
+        gain = (pi + 1) / (ti + 1) - pi / ti
+        """
 
-            heapq.heappush(maxheap, (-gain(newPassi, newTotali), newPassi, newTotali))
+        def gain(i, assigned):
+            pi = classes[i][0] + assigned
+            ti = classes[i][1] + assigned
+            return (pi + 1) / (ti + 1) - pi / ti
 
-        # print(maxheap)
-        total = 0
-        for _, passi, totali in maxheap:
-            total += passi / totali
-        return total / len(classes)
+        # 1. init the heap with gain calculated by assigning 1 student to each class
+        # (gaini, assigned, i)
+        heap = []
+        for i in range(len(classes)):
+            heap.append((-gain(i, 0), 0, i))
+
+        heapq.heapify(heap)
+
+        # 2. for each student:
+        #        pop the class with the max gain
+        #        assign one student to the class
+        for _ in range(extraStudents):
+            # print(f'gains: {[ -gain for gain, _, _ in heap ]}')
+            gaini, n, i = heapq.heappop(heap)
+            n += 1
+            # print(f'add 1 student to class [{i}] because gain={-gaini} -> {classes[i][0] + n}/{classes[i][1] + n}')
+            heapq.heappush(heap, (-gain(i, n), n, i))
+
+        # 3. for all classes, calculate the avg pass ratio
+        return sum( (classes[i][0] + n) / (classes[i][1] + n) for _, n, i in heap ) / len(classes)

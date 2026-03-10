@@ -1,33 +1,35 @@
 class Solution:
     def minRemoveToMakeValid(self, s: str) -> str:
         """
+        a)b(c)d
+               ^
+
+        ))((
+           ^
+
         lee(t(c)o)de)
                     ^
+        lparens: 
+        rparens: 12
 
-        ret: lee(t(c)o)de
-        stack: []
 
-        ())a((
-             ^
-
-        ret: ()a  
-        stack: [3,4]
+        a)(b(c)d
+               ^
+        lparens: 2
+        a(b(c)d
         """
 
-        # Pass 1:
-        stack = []
-        ret = []
-        for c in s:
-            if c != ')':
-                ret.append(c)
-                if c == '(':
-                    stack.append(len(ret) - 1)
-            elif stack:
-                ret.append(c)
-                stack.pop()
+        lparens = []
+        ret = list(s)
+        for i, c in enumerate(ret):
+            if c == '(':
+                lparens.append(i)
+            elif c == ')' and lparens:
+                lparens.pop()
+            elif c == ')':
+                ret[i] = ''
         
-        # Pass 2:
-        for i in stack:
+        for i in lparens:
             ret[i] = ''
-        
+
         return ''.join(ret)

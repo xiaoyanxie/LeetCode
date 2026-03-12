@@ -1,29 +1,28 @@
 class Solution:
     def trap(self, height: List[int]) -> int:
-        l, r = 0, len(height) - 1
-        leftMax, rightMax = height[l], height[r]
+        """
+  total: 6
+   lmax: 3
+ rmaxes: 3  3  3  3  3  3  3  2  2  2  1  0
+        [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
+                                          r
+        """
 
-        """
-        total   : 6
-        leftMax : 3
-        rightMax: 2
-        [0,1,0,2,1,0,1,3,2,1,2,1]
-         l                     
-                               r
-        """
+        lmax = 0
+        rmaxes = [0] * len(height)
+        for i in reversed(range(1, len(height))):
+            if height[i] > rmaxes[i]:
+                rmaxes[i - 1] = height[i]
+            else:
+                rmaxes[i - 1] = rmaxes[i]
         
         total = 0
-        while l < r:
-            if leftMax <= rightMax:
-                acc = leftMax - height[l]
-                l += 1
-                if acc > 0:
-                    total += acc
-                leftMax = max(leftMax, height[l])
-            else:
-                acc = rightMax - height[r]
-                r -= 1
-                if acc > 0:
-                    total += acc
-                rightMax = max(rightMax, height[r])
+        for i, h in enumerate(height):
+            diff = min(lmax, rmaxes[i]) - h
+            if diff > 0:
+                total += diff
+            
+            if h > lmax:
+                lmax = h
+        
         return total

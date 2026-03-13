@@ -2,39 +2,50 @@ from collections import defaultdict
 class UndergroundSystem:
 
     def __init__(self):
-        # check in: which station, what time
+        """
+        checkedIn = {
+            cardID -> (stationName, time)
+            
+        }
+        stat = {
+            (from, to) -> [totalTime, cnt]
 
-        """
-        id -> (station, t)
-        self.checkIn
+            (Leyton, Waterloo) -> [36, 3],
+            (Paradise, Cambridge) -> [14, 1]
+        }
         
-        (station1, station2) -> (totalTime, #customers)
-        self.avg
+        "checkIn(45,"Leyton",3)",
+        "checkIn(32,"Paradise",8)",
+        "checkIn(27,"Leyton",10)",
+        "checkOut(45,"Waterloo",15)",
+        "checkOut(27,"Waterloo",20)",
+        "checkOut(32,"Cambridge",22)",
+        "getAverageTime("Paradise","Cambridge")",
+        "getAverageTime("Leyton","Waterloo")",
+        "checkIn(10,"Leyton",24)",
+        "getAverageTime("Leyton","Waterloo")",
+        "checkOut(10,"Waterloo",38)",
+        "getAverageTime("Leyton","Waterloo")"
         """
-        self.checkInRecord = defaultdict(Tuple[str, int])
-        self.stat = defaultdict()
+        self.checkedIn = {}
+        self.stat = defaultdict(lambda: [0, 0])
 
     def checkIn(self, id: int, stationName: str, t: int) -> None:
-        # A customer with a card ID equal to id, checks in at the station stationName at time t.
-        # A customer can only be checked into one place at a time.
-        if id in self.checkInRecord:
-            raise Exception(f'Customer {id} can only be checked into one place at a time.')
-        self.checkInRecord[id] = (stationName, t)
+        self.checkedIn[id] = (stationName, t)
 
     def checkOut(self, id: int, stationName: str, t: int) -> None:
-        # A customer with a card ID equal to id, checks out from the station stationName at time t.
-        stationIn, t0 = self.checkInRecord.pop(id)
-        
-        record = (stationIn, stationName)
-        if record not in self.stat:
-            self.stat[record] = [0, 0]
-        
-        self.stat[record][0] += t - t0
-        self.stat[record][1] += 1
+        assert id in self.checkedIn
+        checkInStation, checkInTime = self.checkedIn[id]
+        del self.checkedIn[id]
+        self.stat[(checkInStation, stationName)][0] += (t - checkInTime)
+        self.stat[(checkInStation, stationName)][1] += 1
 
     def getAverageTime(self, startStation: str, endStation: str) -> float:
-        totalTime, numCustomers = self.stat[(startStation, endStation)]
-        return totalTime / numCustomers
+        if (startStation, endStation) not in self.stat:
+            return 0.0
+        total, cnt = self.stat[(startStation, endStation)]
+        assert cnt > 0
+        return total / cnt
 
 
 # Your UndergroundSystem object will be instantiated and called as such:

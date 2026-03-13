@@ -1,43 +1,29 @@
 class Solution:
     def maxFrequency(self, nums: List[int], k: int) -> int:
         """
-        1 -> 1
-        
-        2 -> 2
-        4 -> 1
+        1,4,4,5,8,13
+                l
+                   r
 
-        cost() = (nums[j] - nums[j - 1]) * (j - i + 1)
-        while cost() > k:
-            k += (nums[j - 1] - nums[i])
-            i += 1
-            
+        ops: 5
+        maxFreq: 3
 
-        1,1,2,2,4    k=5
-          i
-                j
+        inc r: ops += (nums[r] - nums[r - 1]) * (r - l)
 
-        [1,2,4] k = 4, best = 0
-         i
-           j
-
-        1,4,8,13  k = 5, best = 2
-            i
-              j
-
-        3,9,6    k = 2, best = 1
-          i
-            j
+        inc l: ops -= (nums[r - 1] - nums[l])
         """
-        nums.sort()
-        i = 0
-        best = 0
-        def cost(i, j):
-            return (nums[j] - nums[j - 1]) * (j - i)
+        if len(nums) == 1:
+            return 1
 
-        for j in range(len(nums)): # 1
-            while cost(i, j) > k:
-                k += (nums[j - 1] - nums[i])
-                i += 1
-            k -= cost(i, j)
-            best = max(best, j - i + 1)
-        return best
+        nums.sort()
+        l = 0
+        ops = 0
+        maxFreq = 0
+        for r in range(1, len(nums)):
+            ops += (nums[r] - nums[r - 1]) * (r - l)
+            while ops > k:
+                ops -= (nums[r] - nums[l])
+                l += 1
+            maxFreq = max(maxFreq, r - l + 1)
+        
+        return maxFreq

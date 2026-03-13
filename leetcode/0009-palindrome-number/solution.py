@@ -1,12 +1,11 @@
 class Solution:
     def isPalindrome(self, x: int) -> bool:
-        """
-        a = 0
-        b = 121
-        """
-        a, b = x, 0
-        while a > 0:
-            b *= 10
-            b += a % 10
-            a //= 10
-        return x == b
+        if x < 0:
+            return False
+        
+        n = x
+        rev = 0
+        while n > 0:
+            rev = rev * 10 + (n % 10)
+            n //= 10
+        return x == rev

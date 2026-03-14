@@ -1,36 +1,32 @@
 class Solution:
     def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
-        def merge(result):
-            merged = [result[0]]
-            for i in range(1, len(result)):
-                interval = result[i]
-                if merged[-1][1] >= interval[0]:
-                    #merge
-                    merged[-1][1] = max(merged[-1][1], interval[1])
-                else:
-                    merged.append(interval)
-            return merged
-    
-        # l = 0
-        # r = len(intervals)
-        # while l < r:
-        #     mid = l + (r - l) // 2
-        #     if intervals[mid][0] == newInterval[0]:
-        #         result = intervals[:mid] + [newInterval] + intervals[mid:]
-        #         return merge(result)
+      
+        if len(intervals) == 0:
+            return [newInterval]
 
-        #     if intervals[mid][0] < newInterval[0]:
-        #         l = mid + 1
-        #     else:
-        #         r = mid
+        res = []
         
-        # if 0 <= l < len(intervals) and intervals[l][0] >= newInterval[0]:
-        #     result = intervals[:l] + [newInterval] + intervals[l:]
-        #     return merge(result)
-        # else:
-        #     result = intervals[:l + 1] + [newInterval] + intervals[l + 1:]
-        #     return merge(result)
+       # check current, if first less than new interval's first, add to res
+        # if first equal or bigger than interval's first:
+        #add modified interval, 
+        #for the rest, check the end of interval , if less than res-1's end, continue, if first bigger than res's second, append, if first less than res 's second and second bigger than interval's second, update
+        i = 0
+        n = len(intervals)
+        while i < n and intervals[i][1] < newInterval[0]:
+            res.append(intervals[i])
+            i += 1
+        
+        while i < n and intervals[i][0] <= newInterval[1]:
+            newInterval[0] = min(intervals[i][0], newInterval[0])
+            newInterval[1] = max(intervals[i][1], newInterval[1])
+            i += 1
 
-        index = bisect.bisect_left(intervals, newInterval)
-        intervals.insert(index, newInterval)
-        return merge(intervals)
+        res.append(newInterval)
+      
+        while i < n:
+            res.append(intervals[i])
+            i += 1
+
+        return res
+        
+        

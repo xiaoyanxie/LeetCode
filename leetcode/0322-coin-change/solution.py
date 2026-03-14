@@ -2,18 +2,14 @@ from collections import deque
 
 class Solution:
     def coinChange(self, coins: List[int], amount: int) -> int:
-        queue = deque([ (amount, 0) ])
-        visited = set()
-        while queue:
-            remaining, changes = queue.popleft()
+        dp = [amount + 1] * (amount + 1)
 
-            if remaining == 0:
-                return changes
-
+        dp[0] = 0
+        for i in range(1, amount + 1):
             for coin in coins:
-                nxt_remaining = remaining - coin
-                if nxt_remaining >= 0 and nxt_remaining not in visited:
-                    visited.add(nxt_remaining)
-                    queue.append( (nxt_remaining, changes + 1) )
+                if i - coin >= 0:
+                    dp[i] = min(dp[i], dp[i - coin] + 1)
 
-        return -1
+        if dp[amount] == amount + 1:
+            return -1
+        return dp[amount]

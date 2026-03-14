@@ -1,21 +1,46 @@
 class Solution:
     def countComponents(self, n: int, edges: List[List[int]]) -> int:
-        parent = [ i for i in range(n) ]
+        # if n == 1:
+        #     return n 
+        # adj = collections.defaultdict(list)
+        # for u, v in edges:
+        #     adj[u].append(v)
+        #     adj[v].append(u)
 
-        def find(v):
-            if parent[v] != v:
-                parent[v] = find(parent[v])
-            return parent[v]
+        # def dfs(i):
+        #     visited.add(i)
+            
+        #     for ele in adj[i]:
+        #         if ele not in visited:
+        #             dfs(ele)
 
-        def union(v1, v2):
-            p1, p2 = find(v1), find(v2)
-            if p1 == p2:
-                return False
-            parent[p1] = p2
-            return True
-
-        for edge in edges:
-            if union(edge[0], edge[1]):
-                n -= 1
+        # visited = set()
+        # count = 0
+        # for i in range(n):
+        #     if i not in visited:
+        #         dfs(i)
+        #         count += 1
         
-        return n
+        # return count
+        parent = list(range(n))
+        self.count = n
+        def find(x):
+            if parent[x] != x:
+                parent[x] = find(parent[x])
+            return parent[x]
+        
+        def union(x, y):
+            rootX = find(x)
+            rootY = find(y)
+
+            if rootX != rootY:
+                parent[rootX] = rootY
+                self.count -= 1
+                return True
+            return False
+        
+        for u, v in edges:
+            union(u, v)
+
+        return self.count
+

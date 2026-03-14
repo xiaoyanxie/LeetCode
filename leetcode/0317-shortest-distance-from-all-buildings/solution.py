@@ -1,63 +1,41 @@
 from collections import deque, defaultdict
 class Solution:
     def shortestDistance(self, grid: List[List[int]]) -> int:
-        rows = len(grid)
-        cols = len(grid[0])
-        directions = [ (0, 1), (0, -1), (1, 0), (-1, 0) ]
+        m = len(grid)
+        n = len(grid[0])
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        houses = [ (i, j) for i in range(m) for j in range(n) if grid[i][j] == 1 ]
 
+        def isValidLoc(i, j) -> bool:
+            return 0 <= i < m and 0 <= j < n
 
-        """
-           0 1 2 3 4
-        0 [1,0,2,0,1],
-        1 [0,0,0,0,0],
-        2 [0,0,1,0,0]
-        """
-        
-        def isValidLoc(i, j):
-            return 0 <= i < rows and 0 <= j < cols
-
-        land2Building = {}
-
-        def bfs(starti, startj):
-            queue = deque([(starti, startj, 0)])
-            visited = set([(starti, startj)])
+        landToHouse = defaultdict(lambda: [0, 0]) # [dist, houses]
+        best = inf
+        excluded = set()
+        def bfsToLands(i0, j0, reachCnt):
+            nonlocal best
+            visited = set()
+            queue = deque([(i0, j0, 0)])
+            visited.add((i0, j0))
             while queue:
-                i, j, steps = queue.popleft()
-                # if grid[i][j] == 1:
-                #     # print(f'steps from ({starti},{startj}) to ({i},{j}) = {steps}')
-                #     totalSteps += steps
-                #     buildings += 1
-                #     if buildings == totalBuildings:
-                #         break
-                #     continue
+                i, j, d = queue.popleft()
                 if grid[i][j] == 0:
-                    # print(f'steps from ({starti},{startj}) to ({i},{j}) = {steps}')
-                    if (i, j) not in land2Building:
-                        land2Building[(i, j)] = [steps, 1]
-                    else:
-                        land2Building[(i, j)][0] += steps
-                        land2Building[(i, j)][1] += 1
-
+                    landToHouse[(i, j)][0] += d
+                    landToHouse[(i, j)][1] += 1
+                    if landToHouse[(i, j)][1] == len(houses):
+                        best = min(best, landToHouse[(i, j)][0])
                 for di, dj in directions:
                     ni, nj = i + di, j + dj
                     if not isValidLoc(ni, nj) or grid[ni][nj] != 0 or (ni, nj) in visited:
                         continue
+                    if (ni, nj) in excluded:
+                        continue
+                    if landToHouse[(ni, nj)][1] != reachCnt:
+                        excluded.add((ni, nj))
+                        continue
+                    queue.append((ni, nj, d + 1))
                     visited.add((ni, nj))
-                    queue.append((ni, nj, steps + 1))
-            # print(f'({starti}, {startj}) buildings={buildings}, totalBuildings={totalBuildings}, distance={totalSteps}')
-            # return totalSteps
-        
-        totalBuildings = 0
-        for i in range(rows):
-            for j in range(cols):
-                if grid[i][j] != 1: continue
-                totalBuildings += 1
-                bfs(i, j)
-        
-        best = inf
-        for k in land2Building:
-            dist, num = land2Building[k]
-            if num != totalBuildings: continue
-            best = min(best, dist)
 
+        for k, (i, j) in enumerate(houses):
+            bfsToLands(i, j, k)
         return best if best != inf else -1

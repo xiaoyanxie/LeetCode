@@ -1,40 +1,60 @@
 class Solution:
     def spellchecker(self, wordlist: List[str], queries: List[str]) -> List[str]:
-        """
-        1. exact match
-        2. case insensetive match
-        3. vowel insensetive match
-        """
-        original = set()
-        caseInsensetive = {}
-        vowelInsensetive = {}
-        vowels = set(('a', 'e', 'i', 'o', 'u'))
+        answer = [''] * len(queries)
+        strictList = set()
+        caseInsensitiveList = {}
+        vowelInsensitiveList = {}
 
-        def devowel(word):
-            return ''.join([
-                c if c not in vowels else '*' for c in word.lower()
-            ])
+        def removeVowels(word):
+            ret = []
+            for c in word.lower():
+                if c in 'aeiou':
+                    ret.append('*')
+                else:
+                    ret.append(c)
+            return ''.join(ret)
 
         for word in wordlist:
-            original.add(word)
-            lower = word.lower()
-            devoweled = devowel(word)
-            if lower not in caseInsensetive:
-                caseInsensetive[lower] = word
-            if devoweled not in vowelInsensetive:
-                vowelInsensetive[devoweled] = word
+            strictList.add(word)
+            if word.lower() not in caseInsensitiveList:
+                caseInsensitiveList[word.lower()] = word
+            devowel = removeVowels(word)
+            if devowel not in vowelInsensitiveList:
+                vowelInsensitiveList[devowel] = word
         
-        ret = []
-        for query in queries:
-            lower = query.lower()
-            devoweled = devowel(query)
+        """
+        "KiTe","kite","hare","Hare"
 
-            if query in original:
-                ret.append(query)
-            elif lower in caseInsensetive:
-                ret.append(caseInsensetive[lower])
-            elif devoweled in vowelInsensetive:
-                ret.append(vowelInsensetive[devoweled])
+        strictList: {"KiTe","kite","hare","Hare"}
+        caseInsensitiveList: {
+            'kite': 'KiTe',
+            'hare': 'hare'
+        }
+        vowelInsensitiveList: {
+            'k*t*': 'KiTe',
+            'h*r*': 'hare'
+        }
+
+        "kite","Kite","KiTe","Hare","HARE","Hear","hear","keti","keet","keto"
+                
+         kite   KiTe   KiTe   Hare   hare   ''     ''     KiTe   ''     KiTe
+        """
+
+        for i, query in enumerate(queries):
+            """
+            Precedence Rules:
+            0. Strict match
+            1. Case-insensitive: what happens if 'abc' -> ['aBc', 'Abc'], return 'aBc'
+            2. Vowel Errors: what happens if 'y*ll*w' -> ['YellOw', 'Yellow'], return 'YellOw'
+            3. No match: return empty string
+            """
+            if query in strictList:
+                answer[i] = query
+            elif query.lower() in caseInsensitiveList:
+                answer[i] = caseInsensitiveList[query.lower()]
             else:
-                ret.append('')
-        return ret
+                devowel = removeVowels(query)
+                if devowel in vowelInsensitiveList:
+                    answer[i] = vowelInsensitiveList[devowel]
+        
+        return answer

@@ -1,11 +1,17 @@
 class Solution:
     def minMeetingRooms(self, intervals: List[List[int]]) -> int:
-        intervals.sort()
-        earliestEndTimes = []
-        
-        for start, end in intervals:
-            if earliestEndTimes and earliestEndTimes[0] <= start:
-                heapq.heappop(earliestEndTimes)
-            heapq.heappush(earliestEndTimes, end)
-        
-        return len(earliestEndTimes)
+        """
+        rooms: 3
+        [0,                                              30],
+             [5,       10],  
+                         [11,12],
+                             [12,     16]
+                                   [15,      20]
+        """
+        intervals.sort(key=lambda x: x[0])
+        heap = [] # [16,20,30]
+        for interval in intervals:
+            if heap and heap[0] <= interval[0]:
+                heapq.heappop(heap)
+            heapq.heappush(heap, interval[1])
+        return len(heap)

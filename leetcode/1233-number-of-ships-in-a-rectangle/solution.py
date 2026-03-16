@@ -12,34 +12,40 @@
 
 class Solution:
     def countShips(self, sea: 'Sea', topRight: 'Point', bottomLeft: 'Point') -> int:
-        x0, y0, x1, y1 = bottomLeft.x, bottomLeft.y, topRight.x, topRight.y
-        dx, dy = x1 - x0, y1 - y0
+        """
+        y1         xm|      x1
+        ym + 1       |      ym + 1
+        ----------------------
+        ym           |      ym
+                     |
+                     |
+        y0           |
+          x0       xm|xm+1  x1
+
+        xm = x0 + (x1 - x0) // 2
+        ym = y0 + (y1 - y0) // 2
+
+        from (x0, y0) to (xm, ym)
+        from (xm + 1, y0) to (x1, ym)
+        from (x0, ym + 1) to (xm, y1)
+        from (xm + 1, ym + 1) to (x1, y1)
+        """
+        x0, y0 = bottomLeft.x, bottomLeft.y
+        x1, y1 = topRight.x, topRight.y
+
         if x0 > x1 or y0 > y1:
             return 0
-        hasShips = sea.hasShips(topRight, bottomLeft)
-        # print(f'checking ({x0},{y0}) -> ({x1},{y1}) = {hasShips}')
-        if not hasShips:
+        
+        if not sea.hasShips(topRight, bottomLeft):
             return 0
         
-        if dx == 0 and dy == 0:
+        if x0 == x1 and y0 == y1:
             return 1
-        # divide and conquer
-        """
-        y1        .     .
-
-      yMid        .     .
         
-        y0
-        . x0    xMid    x1
-        """
-        cnt = 0
-        xMid, yMid = x0 + (x1 - x0) // 2, y0 + (y1 - y0) // 2
-        # p(x0, y0) -> p(x2, y2)
-        cnt += self.countShips(sea, Point(xMid, yMid), Point(x0, y0))
-        # p(x0, y2) -> p(x2, y1)
-        cnt += self.countShips(sea, Point(xMid, y1), Point(x0, yMid + 1))
-        # p(x2, y0) -> p(x1, y2)
-        cnt += self.countShips(sea, Point(x1, yMid), Point(xMid + 1, y0))
-        # p(x2, y2) -> p(x1, y1)
-        cnt += self.countShips(sea, Point(x1, y1), Point(xMid + 1, yMid + 1))
-        return cnt
+        xm = x0 + (x1 - x0) // 2
+        ym = y0 + (y1 - y0) // 2
+
+        return (self.countShips(sea, Point(xm, ym), Point(x0, y0))
+             + self.countShips(sea, Point(x1, ym), Point(xm + 1, y0))
+             + self.countShips(sea, Point(xm, y1), Point(x0, ym + 1))
+             + self.countShips(sea, Point(x1, y1), Point(xm + 1, ym + 1)))

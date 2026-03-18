@@ -1,15 +1,16 @@
+from collections import defaultdict
 class RandomizedSet:
 
     def __init__(self):
-        self.index = {}
-        self.nums = []
+        self.items = []
+        self.index = defaultdict(int)
 
     def insert(self, val: int) -> bool:
         if val in self.index:
             return False
         
-        self.nums.append(val)
-        self.index[val] = len(self.nums) - 1
+        self.items.append(val)
+        self.index[val] = len(self.items) - 1
         return True
 
     def remove(self, val: int) -> bool:
@@ -17,17 +18,16 @@ class RandomizedSet:
             return False
         
         i = self.index[val]
-        self.index[self.nums[-1]] = i
+        self.index[self.items[-1]] = i
         del self.index[val]
 
-        # swap and pop
-        self.nums[i], self.nums[-1] = self.nums[-1], self.nums[i]
-        self.nums.pop()
-        # print(f'removed {val}, index={self.index}, nums={self.nums}')
+        self.items[i], self.items[-1] = self.items[-1], self.items[i]
+        self.items.pop()
+
         return True
 
     def getRandom(self) -> int:
-        return random.choice(self.nums)
+        return random.choice(self.items)
 
 
 # Your RandomizedSet object will be instantiated and called as such:

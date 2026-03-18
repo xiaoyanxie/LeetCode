@@ -1,21 +1,31 @@
 from collections import deque, defaultdict
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        # classic topsort
-        graph = defaultdict(set) # {0: [1], 1: [0]}
-        indegree = { i: 0 for i in range(numCourses) } # {0: 1, 1: 1, 2: 0}
-        for second, first in prerequisites: # 0, 1
-            indegree[second] += 1
-            graph[first].add(second)
+        if not prerequisites or not prerequisites[0]:
+            return True
         
-        queue = deque([ i for i in indegree if indegree[i] == 0 ]) # []
-        schedule = [] # [2]
-        while queue:
-            course = queue.popleft()
-            schedule.append(course)
-            for nxt in graph[course]:
-                indegree[nxt] -= 1
-                if indegree[nxt] == 0:
-                    queue.append(nxt)
+        courses = collections.defaultdict(list)
+        inDegree = [0] * numCourses
 
-        return len(schedule) == numCourses
+        for u, v in prerequisites:
+            courses[v].append(u)
+            inDegree[u] += 1
+        
+        count = 0
+        queue = deque()
+        for i in range(numCourses):
+            if inDegree[i] == 0:
+                queue.append(i)
+                
+        while queue:
+            cur = queue.popleft()
+            count += 1
+            for c in courses[cur]:
+                inDegree[c] -= 1
+                if inDegree[c] == 0:
+                    queue.append(c)
+
+        return count == numCourses
+
+
+

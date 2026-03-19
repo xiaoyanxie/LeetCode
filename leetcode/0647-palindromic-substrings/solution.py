@@ -1,23 +1,38 @@
 class Solution:
-
-    # abbabcba
-    #   i
-    #     j
-    def expand(self, s, i, j) -> int:
-        n = 0
-        while i >= 0 and j < len(s) and s[i] == s[j]:
-            length = j - i + 1
-            n += 1
-            i -= 1
-            j += 1
-        return n
-    
     def countSubstrings(self, s: str) -> int:
-        count = 0
-
-        for i, c in enumerate(s):
-            count += self.expand(s, i, i)
-            if i > 0:
-                count += self.expand(s, i - 1, i)
-
-        return count
+        """
+        abbc
+           ^
+            ^
+        a,b,bb,b,c
+        cbaabc
+             ^
+         ^
+        count = 1
+        for i in range(1, len(s)):
+            expand(i,i)
+            expand(i -1,i)
+        def expand(i,j):
+            counter = 0
+            self.count += 1
+        """
+        def expand(i,j):
+            count = 0
+            while i >= 0 and j < len(s):
+                if s[i] == s[j]:
+                    count += 1
+                else:
+                    return count
+                i -= 1
+                j += 1
+            return count
+        
+        if len(s) <= 1:
+            return 1
+        res = 1
+        for i in range(1, len(s)):
+            m = expand(i-1, i)
+            n = expand(i, i)
+            res = res + m + n
+        return res
+       

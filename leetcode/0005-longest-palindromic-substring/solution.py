@@ -1,39 +1,33 @@
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        """
-        babad
-
-        cbbd
-        """
-
-        def expand(i, j) -> str:
-            """
-            aabaa
-            i
-                 j
-            
-            cbbd
-             i
-               j
-
-            a
-            i
-             j
-            """
-            while 0 <= i and j < len(s):
-                if s[i] != s[j]:
+        def expand(i,j):
+            l = float('inf')
+            r = -float('inf')
+            while i >= 0 and j < len(s):
+                if s[i] == s[j]:
+                    l = i
+                    r = j
+                    i -= 1
+                    j += 1
+                    continue
+                else:
                     break
-                i -= 1
-                j += 1
-            return s[i + 1:j]
+                
+            if r - l + 1 > self.maxLen:
+                self.start = l
+                self.maxLen = r - l + 1
+            return
         
-        best = s[0]
-        for i in range(len(s)):
-            p1 = expand(i, i)
-            if len(p1) > len(best):
-                best = p1
+        if len(s) <= 1:
+            return s
+        self.start = 0
+        self.maxLen = 1
+        for i in range(1, len(s)):
+            expand(i,i)
+            expand(i-1, i)
+            
+        return s[self.start: self.start + self.maxLen]
 
-            p2 = expand(i, i + 1)
-            if len(p2) > len(best):
-                best = p2
-        return best
+
+
+

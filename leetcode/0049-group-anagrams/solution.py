@@ -1,18 +1,29 @@
-from collections import defaultdict
 class Solution:
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
         """
-        ["eat","tea","tan","ate","nat","bat"]
+        find one anagram->iterate
+        eat
+        ^
+        a1
+        e1
+        t1
 
-        {
-            'aet': ['eat','tea', 'ate']
-            'ant': ['tan', 'nat']
-            'abt': ['bat']
-        }
+        tea
         """
-        groups = defaultdict(list)
 
-        for s in strs:
-            groups[''.join(sorted(s))].append(s)
-        
-        return [ groups[key] for key in groups ]
+        table = collections.defaultdict(list)
+        for str in strs:
+            # newStr = "".join(sorted(str))
+            # table[newStr].append(str)
+            count = [0] *26
+            for c in str:
+                count[ord(c) - ord("a")] += 1
+            table[tuple(count)].append(str)
+
+        # res = []
+        # for key in table.keys():
+        #     ana = list(table[key])
+        #     res.append(ana)
+        return list(table.values())
+            
+

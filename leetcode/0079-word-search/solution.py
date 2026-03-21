@@ -1,50 +1,35 @@
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
         """
-        dfs(i, j, k, visited)    
-        
         ABCCED
-            k
-
-        dfs(0, 0, 0, {A}) -> dfs(1, 0, 1, {A, S}) -> False
-                          -> dfs(0, 1, 1, {A, B}) -> dfs(0, 2, 2, {A, B, C}) -> dfs(0, 3, 3, {A, B, C, E}) -> False
-                                                                             -> dfs(1, 2, 3, {A, B, C, C}) -> ... -> dfs(2, 1, 5, {A, B, C, C, E, D}) -> True
+             ^
         """
-        rows = len(board)
-        cols = len(board[0])
+        visited = set()
+        self.dire = [[1,0],[-1,0],[0,1],[0,-1]]
 
-        directions = [ (0, 1), (0, -1), (1, 0), (-1, 0) ]
-
-        def isValidLoc(i, j) -> bool:
-            return 0 <= i < rows and 0 <= j < cols
-
-        def dfs(i, j, k) -> bool: # k=5, i=2, j=1
-            # base case:
-            if k == len(word) - 1:
+        def dfs(idx, i, j):
+            
+            if board[i][j] != word[idx]:
+                return False
+            visited.add((i,j))
+            
+            if board[i][j] == word[idx] and idx == len(word) - 1:
                 return True
-            
-            for di, dj in directions:
-                ni, nj = i + di, j + dj
-                if not isValidLoc(ni, nj) or board[ni][nj] == '' or board[ni][nj] != word[k + 1]:
-                    continue
-                
-                char = board[ni][nj]
-                board[ni][nj] = ''
 
-                if dfs(ni, nj, k + 1):
-                    board[ni][nj] = char
-                    return True
-                board[ni][nj] = char
-            
+            for a,b in self.dire:
+                nx, ny = i + a, j + b
+                if 0 <= nx < m and 0 <= ny < n and (nx, ny) not in visited:
+                    if dfs(idx + 1, nx, ny):
+                        return True 
+            visited.remove((i,j))
             return False
-        
-        for i in range(rows):
-            for j in range(cols):
-                if board[i][j] == word[0]:
-                    board[i][j] = ''
-                    if dfs(i, j, 0):
-                        board[i][j] = word[0]
+
+        m = len(board)
+        n = len(board[0])
+        for i in range(m):
+            for j in range(n):
+                if board[i][j] == word[0] and (i,j) not in visited:
+                    if dfs(0, i, j):
                         return True
-                    board[i][j] = word[0]
         
         return False

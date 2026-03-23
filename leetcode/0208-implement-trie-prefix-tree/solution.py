@@ -1,39 +1,37 @@
-class Node:
-    def __init__(self):
+class TrieNode:
+    def __init__(self, char=None):
+        self.char = char
         self.children = {}
-        self.isWord = False
-
+        self.is_last = False
 class Trie:
-
     def __init__(self):
-        self.root = Node()
-
+        self.trie = TrieNode("#")
     def insert(self, word: str) -> None:
-        curr = self.root
-        for i, c in enumerate(word):
-            if c in curr.children:
-                curr = curr.children[c]
-                continue
-            curr.children[c] = Node()
-            curr = curr.children[c]
-        curr.isWord = True
+        root = self.trie
+        for char in word:
+            if char not in root.children:
+                root.children[char] = TrieNode(char)
+            root = root.children[char]
+        root.is_last = True
 
     def search(self, word: str) -> bool:
-        curr = self.root
-        for i, c in enumerate(word):
-            if c not in curr.children:
+        root = self.trie
+        for char in word:
+            if char in root.children:
+                root = root.children[char]
+            else:
                 return False
-            curr = curr.children[c]
-        return curr.isWord
-
+        return root.is_last
+       
     def startsWith(self, prefix: str) -> bool:
-        curr = self.root
-        for i, c in enumerate(prefix):
-            if c not in curr.children:
+        root = self.trie
+        for char in prefix:
+            if char in root.children:
+                root = root.children[char]
+            else:
                 return False
-            curr = curr.children[c]
         return True
-
+       
 # Your Trie object will be instantiated and called as such:
 # obj = Trie()
 # obj.insert(word)

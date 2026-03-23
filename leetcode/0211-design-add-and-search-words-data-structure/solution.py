@@ -1,50 +1,59 @@
-class Node:
-    def __init__(self):
+class TrieNode:
+    def __init__(self, char=None):
+        self.char = char
+        self.is_last = False
         self.children = {}
-        self.isWord = False
-
 class WordDictionary:
 
     def __init__(self):
-        self.root = Node()
+        self.trie = TrieNode("#")
 
     def addWord(self, word: str) -> None:
-        curr = self.root
-        for c in word:
-            if c in curr.children:
-                curr = curr.children[c]
-                continue
-            curr.children[c] = Node()
-            curr = curr.children[c]
-        curr.isWord = True
-
-    def __search(self, word, i, children):
-        if word[i] == '.':
-            if i == len(word) - 1:
-                # check if there is any words in children
-                for k in children:
-                    if children[k].isWord:
-                        return True
-                return False
-            else:
-                # return true if any child matches the next char
-                for k in children:
-                    if self.__search(word, i + 1, children[k].children):
-                        return True
-                return False
-        elif word[i] in children:
-            node = children[word[i]]
-            if i == len(word) - 1:
-                return node.isWord
-            return self.__search(word, i + 1, node.children)
-        return False
+        root = self.trie
+        for char in word:
+            if char not in root.children:
+                root.children[char] = TrieNode(char)
+            root = root.children[char]
+        root.is_last = True
 
     def search(self, word: str) -> bool:
-        if not word:
-            return True
-        return self.__search(word, 0, self.root.children)
+        """
+        dummy
+          |
+          a
+        | | |
+        c b d
+        |   |
+        d   e
 
+        query: a.e
 
+        dfs(dummy, 0) -> dfs(node(a), 1) -> dfs(node(c), 2) -> False
+                                         -> dfs(node(b), 2) -> False
+                                         -> dfs(node(d), 2) -> dfs(node(e), 3) -> True
+        """
+        def dfs(root, idx): # node(e), 3
+            if idx == len(word):
+                return root.is_last
+
+            c = word[idx] # e
+
+            # 1. char is a-z
+            if c != '.':
+                if c not in root.children:
+                    return False
+                return dfs(root.children[c], idx + 1)
+            
+            # 2. char is .
+            for char in root.children: # c b [d]
+                nxt = root.children[char] # [d]
+                found = dfs(nxt, idx + 1)
+                if found:
+                    return True
+            return False
+        return dfs(self.trie, 0)
+
+    
 # Your WordDictionary object will be instantiated and called as such:
 # obj = WordDictionary()
 # obj.addWord(word)

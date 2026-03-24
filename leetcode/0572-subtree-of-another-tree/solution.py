@@ -6,18 +6,24 @@
 #         self.right = right
 class Solution:
     def isSubtree(self, root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
-        
-        @cache
-        def hashTree(tree):
-            if not tree:
-                return hash(None)
-            return hash( (tree.val, hashTree(tree.left), hashTree(tree.right)) )
-
-        def hasSubRoot(node):
-            if not node:
-                return False
-            if hashTree(node) == hashTree(subRoot):
+        def isSame(root, subRoot):
+            if not root and not subRoot:
                 return True
-            return hasSubRoot(node.left) or hasSubRoot(node.right)
+            if not root or not subRoot:
+                return False
+            if root.val == subRoot.val:
+                return isSame(root.left, subRoot.left) and isSame(root.right, subRoot.right)
+            else:
+                return False
+
+        if not root and not subRoot:
+            return True
+        if not subRoot or not root:
+            return False
         
-        return hasSubRoot(root)
+        if isSame(root, subRoot):
+            return True
+        else:
+            return self.isSubtree(root.left, subRoot) or self.isSubtree(root.right, subRoot)
+                
+        

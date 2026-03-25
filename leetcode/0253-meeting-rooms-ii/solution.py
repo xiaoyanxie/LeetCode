@@ -1,24 +1,22 @@
 class Solution:
     def minMeetingRooms(self, intervals: List[List[int]]) -> int:
         """
-        [0, 30] [5, 10][15,20]
-        heap = [30]
-        heap = [10,30]
-        heap = [30]
-        [2,4][7,10]
-        heap = [4]
-        """
-        if len(intervals) == 1:
-            return 1
-        intervals.sort()
+        room: 2
+        [[0,30],[5,10],[15,20]]
+        [0,30],[5,10]
 
-        heap = [intervals[0][1]]
-        for interval in intervals[1:]:
-            if interval[0] < heap[0]:
-                heapq.heappush(heap, interval[1])
-            else:
-                heapq.heappop(heap)
-                heapq.heappush(heap ,interval[1])
+        [0,                                      30]
+                [5,   10]
+                     [10,11]
+                             [15,       20]
+                                     [18,     23]
         
+        heap: 20,23,30
+        """
+        intervals.sort()
+        heap = []
+        for i, interval in enumerate(intervals):
+            if heap and heap[0] <= interval[0]:
+                heapq.heappop(heap)
+            heapq.heappush(heap, interval[1])
         return len(heap)
-

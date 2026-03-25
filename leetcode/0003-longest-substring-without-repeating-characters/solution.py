@@ -2,21 +2,20 @@ class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:
         """
         best = 3
-        seen: {}
+        window: {b,c,a}
         abcabcbb
-               i
-               j
+         l
+           r
         """
 
+        window = [0] * 256
         best = 0
-        seen = set()
-        i = 0
-        for j, c in enumerate(s):
-            while c in seen:
-                seen.remove(s[i])
-                i += 1
-            
-            seen.add(c)
-            best = max(best, j - i + 1)
+        l = 0
+        for r, c in enumerate(s):
+            while window[ord(c)] == 1:
+                window[ord(s[l])] = 0
+                l += 1
+            window[ord(c)] = 1
+            best = max(best, r - l + 1)
 
         return best

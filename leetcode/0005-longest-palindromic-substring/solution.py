@@ -1,33 +1,34 @@
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        def expand(i,j):
-            l = float('inf')
-            r = -float('inf')
-            while i >= 0 and j < len(s):
-                if s[i] == s[j]:
-                    l = i
-                    r = j
-                    i -= 1
-                    j += 1
-                    continue
-                else:
-                    break
-                
-            if r - l + 1 > self.maxLen:
-                self.start = l
-                self.maxLen = r - l + 1
-            return
+        def expand(i, j) -> tuple[int, int]:
+            # expand and return the length
+            """
+            abccbd
+            i
+                 j         
+
+            abcbd
+            i
+             j    
+            """
+            while 0 <= i and j < len(s) and s[i] == s[j]:
+                i -= 1
+                j += 1
+            # print(f'{s[i + 1:j]}')
+            return i + 1, j
         
-        if len(s) <= 1:
-            return s
-        self.start = 0
-        self.maxLen = 1
-        for i in range(1, len(s)):
-            expand(i,i)
-            expand(i-1, i)
+        best = [0, 1]
+        for i in range(len(s)):
+            l, r = expand(i, i)
+            if r - l > best[1] - best[0]:
+                best[0] = l
+                best[1] = r
+            if i + 1 == len(s):
+                break
             
-        return s[self.start: self.start + self.maxLen]
-
-
-
-
+            l, r = expand(i, i + 1)
+            if r - l > best[1] - best[0]:
+                best[0] = l
+                best[1] = r
+        return s[best[0]: best[1]]
+            
